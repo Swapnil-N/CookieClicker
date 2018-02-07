@@ -1,6 +1,8 @@
 package com.example.a10014422.cookieclicker;
 
 import android.provider.ContactsContract;
+import android.support.constraint.ConstraintLayout;
+import android.support.constraint.ConstraintSet;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
@@ -16,6 +18,7 @@ public class CookieClickerActivity extends AppCompatActivity {
     ImageView mainImage;
     ImageView plus1;
     int counter;
+    ConstraintLayout constraintLayout;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -25,6 +28,8 @@ public class CookieClickerActivity extends AppCompatActivity {
         cookieText = (TextView)findViewById(R.id.Cookietext);
         mainImage = (ImageView) findViewById(R.id.mainImageView);
         plus1 = (ImageView) findViewById(R.id.plus1image);
+        constraintLayout = (ConstraintLayout) findViewById(R.id.constraintid);
+
 
         final ScaleAnimation scale = new ScaleAnimation(0.5f,1.1f,0.5f,1.1f, Animation.RELATIVE_TO_SELF,0.5f,Animation.RELATIVE_TO_SELF,0.5f);
         scale.setDuration(200);
@@ -35,13 +40,37 @@ public class CookieClickerActivity extends AppCompatActivity {
                 view.startAnimation(scale);
                 counter+=1;
                 cookieText.setText(counter+" cookies");
-                final TranslateAnimation scale1 = new TranslateAnimation(Animation.RELATIVE_TO_SELF,0.0f,Animation.RELATIVE_TO_SELF,0.0f,Animation.RELATIVE_TO_SELF,5.0f,Animation.RELATIVE_TO_SELF,1.0f);
-                scale1.setDuration(2000);
-                plus1.startAnimation(scale1);
+
+                final TextView textViewInCode;
+                textViewInCode = new TextView(getApplicationContext());
+                textViewInCode.setId(View.generateViewId());
+                textViewInCode.setText("+1");
+
+                ConstraintLayout.LayoutParams params = new ConstraintLayout.LayoutParams(ConstraintLayout.LayoutParams.WRAP_CONTENT, ConstraintLayout.LayoutParams.WRAP_CONTENT);
+                textViewInCode.setLayoutParams(params);
+
+                constraintLayout.addView(textViewInCode);
+
+                ConstraintSet constraintSet = new ConstraintSet();
+                constraintSet.clone(constraintLayout);
+
+                constraintSet.connect(textViewInCode.getId(),ConstraintSet.TOP,constraintLayout.getId(),ConstraintSet.TOP);
+                constraintSet.connect(textViewInCode.getId(),ConstraintSet.BOTTOM,constraintLayout.getId(),ConstraintSet.BOTTOM);
+                constraintSet.connect(textViewInCode.getId(),ConstraintSet.RIGHT,constraintLayout.getId(),ConstraintSet.RIGHT);
+                constraintSet.connect(textViewInCode.getId(),ConstraintSet.LEFT,constraintLayout.getId(),ConstraintSet.LEFT);
+                constraintSet.setHorizontalBias(textViewInCode.getId(), (float) (Math.random()*.5+.25));
+                constraintSet.setVerticalBias(textViewInCode.getId(), 0.25f);
+
+                constraintSet.applyTo(constraintLayout);
+
+                Animation scale1 = new TranslateAnimation(0,0,200,0);
+                scale1.setDuration(1000);
+                textViewInCode.startAnimation(scale1);
+                textViewInCode.setVisibility(View.INVISIBLE);
+
             }
         });
     }
-
 
 
 }
