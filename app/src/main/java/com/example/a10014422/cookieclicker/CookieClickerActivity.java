@@ -22,10 +22,9 @@ public class CookieClickerActivity extends AppCompatActivity {
     ImageView mainImage;
     AtomicInteger counter;
     ConstraintLayout constraintLayout;
-    ImageView grandmaPic;
+    ImageView upgrade1pic;
     ImageView grandmaPicSmall;
     int grandmaCost = 5;
-    boolean grandBool = true;
 
 
     @Override
@@ -36,6 +35,7 @@ public class CookieClickerActivity extends AppCompatActivity {
         cookieText = (TextView)findViewById(R.id.Cookietext);
         mainImage = (ImageView) findViewById(R.id.mainImageView);
         constraintLayout = (ConstraintLayout) findViewById(R.id.constraintid);
+        upgrade1pic = (ImageView) findViewById(R.id.id_upgrade1);
 
         counter = new AtomicInteger(0);
 
@@ -55,35 +55,36 @@ public class CookieClickerActivity extends AppCompatActivity {
                 counter.getAndAdd(1);
                 cookieText.setText(counter+" cookies");
                 plusOneAnimation();
-/*                if (counter.get() >= 5)
-                    grandBool = true;
-                else
-                    grandBool = false;*/
-                if (counter.get() >= grandmaCost && grandmaPic.getVisibility() ==  /*&& grandBool*/){
-                    addGrandma();
-                    //grandBool = false;
-                }
-                if (grandmaPic != null) {
-                    grandmaPic.setOnClickListener(new View.OnClickListener() {
-                        @Override
-                        public void onClick(View view) {
-                            grandmaPic.setVisibility(View.INVISIBLE);
-                            //grandmaPic.setClickable(false);
-                            counter.addAndGet(-grandmaCost);
-                           /* if (counter.get() >= 5)
-                                grandBool = true;
-                            else
-                                grandBool = false;*/
 
-                            cookieText.setText(counter+" cookies");
-                            moveGrandma();
-                        }
-                    });
+                if (counter.get() >= grandmaCost ){
+                    upgrade1pic.setVisibility(View.VISIBLE);
                 }
+
+                upgrade1pic.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        counter.addAndGet(-grandmaCost);
+                        if (counter.get() < 5) {
+                            upgrade1pic.setVisibility(View.INVISIBLE);
+                            upgrade1pic.startAnimation(fadeOut);
+                        }
+                        cookieText.setText(counter+" cookies");
+                        moveGrandma();
+                    }
+                });
+
             }
         });
 
 
+    }
+
+    public static class myThread extends Thread {
+
+        public void run (){
+
+
+        }
     }
 
     public void moveGrandma() {
@@ -107,39 +108,10 @@ public class CookieClickerActivity extends AppCompatActivity {
         constraintSet3.setVerticalBias(grandmaPicSmall.getId(), 0.90f);
 
         constraintSet3.applyTo(constraintLayout);
-    }
 
-    public static class myThread extends Thread {
-
-        public void run (){
-
-
-
-        }
-
-    }
-    
-    public void addGrandma(){
-        grandmaPic = new ImageView(getApplicationContext());
-        grandmaPic.setId(View.generateViewId());
-        grandmaPic.setImageResource(R.drawable.grandma);
-
-        ConstraintLayout.LayoutParams paramsG = new ConstraintLayout.LayoutParams(ConstraintLayout.LayoutParams.WRAP_CONTENT, ConstraintLayout.LayoutParams.WRAP_CONTENT);
-        grandmaPic.setLayoutParams(paramsG);
-
-        constraintLayout.addView(grandmaPic);
-
-        ConstraintSet constraintSet2 = new ConstraintSet();
-        constraintSet2.clone(constraintLayout);
-
-        constraintSet2.connect(grandmaPic.getId(),ConstraintSet.TOP,constraintLayout.getId(),ConstraintSet.TOP);
-        constraintSet2.connect(grandmaPic.getId(),ConstraintSet.BOTTOM,constraintLayout.getId(),ConstraintSet.BOTTOM);
-        constraintSet2.connect(grandmaPic.getId(),ConstraintSet.RIGHT,constraintLayout.getId(),ConstraintSet.RIGHT);
-        constraintSet2.connect(grandmaPic.getId(),ConstraintSet.LEFT,constraintLayout.getId(),ConstraintSet.LEFT);
-        constraintSet2.setHorizontalBias(grandmaPic.getId(), (float) (Math.random()*.5+.25));
-        constraintSet2.setVerticalBias(grandmaPic.getId(), 0.10f);
-
-        constraintSet2.applyTo(constraintLayout);
+        final AlphaAnimation fadeIn = new AlphaAnimation(0f,1f);
+        fadeIn.setDuration(300);
+        grandmaPicSmall.startAnimation(fadeIn);
     }
 
     public void plusOneAnimation(){
